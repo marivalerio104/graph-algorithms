@@ -9,7 +9,7 @@ BIN_DIR = bin
 FLAGS = $(strip -Wall -Wextra)
 
 # Creates a list of the cpp files in SRC_DIR
-SOURCE_FILES = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/vector_heap/*.cpp $(SRC_DIR)/graph/*.cpp)
+SOURCE_FILES = $(wildcard $(SRC_DIR)/*.cpp $(SRC_DIR)/heap/*.cpp $(SRC_DIR)/graph/*.cpp)
 
 # Creates a list of .o files based on the list of .cpp files
 OBJECT_FILES = $(SOURCE_FILES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
