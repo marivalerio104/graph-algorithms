@@ -25,6 +25,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	mkdir -p $(@D)
 	$(XC) $(FLAGS) -c $< -o $@
 
+run: 
+	bin/graph_algorithms.exe
+
 # Deletes the BIN_DIR and OBJ_DIR directories
 clean:
 	rm -rf $(BIN_DIR) 

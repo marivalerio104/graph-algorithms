@@ -2,7 +2,7 @@
 
 Heap::Heap() { last = 0; }
 
-void Heap::insert(pair<int, int> edge, int priority) {
+void Heap::insert(std::pair<int, int> edge, int priority) {
   last++;
   vector[last] = HeapCell{edge, priority};
   int i = last;
@@ -16,8 +16,8 @@ void Heap::insert(pair<int, int> edge, int priority) {
   }
 }
 
-pair<int, int> Heap::remove() {
-  pair<int, int> deleted = vector[1].edge;
+std::pair<int, int> Heap::remove() {
+  std::pair<int, int> deleted = vector[1].edge;
   vector[1] = vector[last];
   last--;
   int i = 1;
@@ -25,7 +25,7 @@ pair<int, int> Heap::remove() {
   // Exchange with its smallest child until it is smaller or equal than them
   while((2*i <= last && vector[2*i].priority < vector[i].priority) ||
       (2*i+1 <= last && vector[2*i+1].priority < vector[i].priority)) {
-    int child = (vector[2*i].priority <= vector[2*i+1].priority) ? 2*i : 2*i+1
+    int child = (vector[2*i].priority <= vector[2*i+1].priority) ? 2*i : 2*i+1;
     HeapCell temp = vector[child];
     vector[child] = vector[i];
     vector[i] = temp;

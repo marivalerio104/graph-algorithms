@@ -1,5 +1,5 @@
 #pragma once
-#include 'GraphCell.hpp'
+#include "GraphCell.hpp"
 
 constexpr int MAX_NODES = 30; // Maximum number of nodes the graph can have
 

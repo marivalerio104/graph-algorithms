@@ -1,7 +1,7 @@
 #pragma once
 #include "HeapCell.hpp"
 
-constexpr int MAX_HEAP = 30  // Maximum number of elements the Heap can hold
+constexpr int MAX_HEAP = 30;  // Maximum number of elements the Heap can hold
 
 class Heap {
 private:

@@ -1,4 +1,4 @@
-#include "GraphCell.hpp"
+#include "Graph.hpp"
 
 Graph::Graph() { counter = 0; }
 
