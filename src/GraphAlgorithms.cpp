@@ -3,8 +3,8 @@
 std::vector<std::pair<int, int>> dijkstra(Graph* graph, int n) {
   std::vector<std::pair<int, int>> paths;  // Array of minimum costs and immediately preceding nodes
   std::vector<bool> completed;             // Completed nodes already chosen as pivots
-  paths.push_back({0, 0});
-  completed.push_back(false);
+  paths.push_back({0, 0});                 // Dummy element to make node indices 1-based
+  completed.push_back(false);              // Dummy element to make node indices 1-based
 
   for (int i = 1; i <= graph->numNodes(); i++) {  // Initialization of the paths
     if (i != n) {
@@ -75,4 +75,60 @@ std::vector<std::pair<int, int>> kruskal(Graph* graph) {
     }
   }
   return mst;
+}
+
+
+void colorNode(int n, const std::vector<std::vector<int>> adjacents, 
+               std::vector<std::vector<int>>& currentSolution,
+               std::vector<std::vector<int>>& bestSolution, 
+               int& colorsBest, int& colorsCurrent) {
+  // For each possible color
+  for(int color = 0; color < int(adjacents.size())-1; color++) {
+    // If assigning this color is feasible
+    if(areDisjoint(adjacents[n], currentSolution[color])) {
+      currentSolution[color].push_back(n);
+      // Increment current color count if it is the first time using this color
+      if(currentSolution[color].size() == 1) colorsCurrent++;  
+    
+      if(n == int(adjacents.size())-1) { // Stop condition
+        if(colorsBest == 0 || colorsCurrent < colorsBest) {  // If a better solution was found
+          bestSolution = currentSolution;
+          colorsBest = colorsCurrent;
+        }
+      // Does not continue if the current solution is worse than the best solution
+      } else if((colorsCurrent <= colorsBest && colorsBest != 0) || colorsBest == 0) {
+        colorNode(n+1, adjacents, currentSolution, bestSolution, colorsBest, colorsCurrent);
+      }
+      // Backtrack
+      currentSolution[color].pop_back();
+      if(currentSolution[color].size() == 0) colorsCurrent--;
+    }
+  }
+}
+
+std::vector<std::vector<int>> graphColoring(Graph* graph) {
+  std::vector<std::vector<int>> currentSolution;  // Current color assignment
+  int colorsBest = 0, colorsCurrent = 0;          // Tracks the amount of colors used
+  std::vector<std::vector<int>> adjacents;
+  adjacents.push_back({});                        // Dummy element to make node indices 1-based
+
+  // Initialize adjacency list and current solution vectors
+  int n = graph->firstNode();
+  while(n) {
+    std::vector<int> aux;
+    currentSolution.push_back(aux);  // Each color has an initially empty set of nodes
+    adjacents.push_back(aux);
+    n = graph->nextNode(n);
+  }
+  // Fill adjacency list: store adjacent nodes for each node
+  for(int n = 1; n <= graph->numNodes(); n++) {
+    for(int na = 1; na <= graph->numNodes(); na++) {
+      if(n != na && graph->areAdjacent(n, na)) {
+        adjacents[n].push_back(na);
+      }
+    } 
+  }
+  std::vector<std::vector<int>> bestSolution = currentSolution;
+  colorNode(1, adjacents, currentSolution, bestSolution, colorsBest, colorsCurrent);
+  return bestSolution;
 }

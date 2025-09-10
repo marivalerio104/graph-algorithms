@@ -16,6 +16,7 @@ void firstAdjacentNode(Graph* graph);
 void nextAdjacentNode(Graph* graph);
 void dijkstraMenu(Graph* graph);
 void kruskalMenu(Graph* graph);
+void graphColoringMenu(Graph* graph);
 
 int main() {
   Graph* graph = new Graph();
@@ -25,19 +26,19 @@ int main() {
   int A = graph->addNode('A');
   int B = graph->addNode('B');
   int C = graph->addNode('C');
-  int D = graph->addNode('D');
-  int E = graph->addNode('E');
-  int F = graph->addNode('F');
+  // int D = graph->addNode('D');
+  // int E = graph->addNode('E');
+  // int F = graph->addNode('F');
   // graph->addNode('G');
   graph->addEdge(A, B, 4);
   graph->addEdge(A, C, 2);
-  graph->addEdge(B, C, 1);
-  graph->addEdge(B, D, 5);
-  graph->addEdge(C, D, 8);
-  graph->addEdge(C, E, 10);
-  graph->addEdge(D, E, 2);
-  graph->addEdge(D, F, 6);
-  graph->addEdge(E, F, 3);
+  // graph->addEdge(B, C, 1);
+  // graph->addEdge(B, D, 5);
+  // graph->addEdge(C, D, 8);
+  // graph->addEdge(C, E, 10);
+  // graph->addEdge(D, E, 2);
+  // graph->addEdge(D, F, 6);
+  // graph->addEdge(E, F, 3);
 
   std::cout << "Character graph created." << std::endl
             << "Do not add more than 30 nodes, do not use duplicate labels, and weights must be greater than 0." << std::endl;
@@ -77,7 +78,7 @@ int main() {
         std::cout << "\nAlgorithms:" << std::endl
                   << "1. Dijkstra: finds the shortest path from one node to all the others" << std::endl
                   << "2. Kruskal: finds the minimum cost spanning tree" << std::endl
-                  << "3. Color a graph using the smallest number of colors possible" << std::endl
+                  << "3. Graph coloring: color a graph so that no two adjacent nodes share the same color." << std::endl
                   << "4. Lowest cost Hamiltonian circuit (using branch and bound)" << std::endl
                   << "5. Back" << std::endl;
         
@@ -85,6 +86,7 @@ int main() {
 
         if (subOption == 1) dijkstraMenu(graph);
         else if (subOption == 2) kruskalMenu(graph);
+        else if (subOption == 3) graphColoringMenu(graph);
       }
   }
 }
@@ -265,4 +267,21 @@ void kruskalMenu(Graph* graph) {
       << graph->weight(edge.first, edge.second) << ")" << std::endl;
   }
   std::cout << "Total cost: " << totalCost << std::endl;
+}
+
+void graphColoringMenu(Graph* graph) {
+  std::vector<std::vector<int>> colors = graphColoring(graph);
+  int i = 1;
+  std::cout << "\nSets of vertices colored with a different color:" << std::endl;
+
+  for(std::vector<int> color : colors) {
+    if(color.size() != 0) {
+      std::cout << "  " << i << ": ";
+      for(int v : color) {
+        std::cout<< graph->label(v) << ", ";
+      }
+      std::cout << std::endl;
+      i++;
+    }
+  }
 }
