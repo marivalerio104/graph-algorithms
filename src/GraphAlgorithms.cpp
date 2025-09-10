@@ -42,3 +42,37 @@ std::vector<std::pair<int, int>> dijkstra(Graph* graph, int n) {
   }
   return paths;
 }
+
+std::vector<std::pair<int, int>> kruskal(Graph* graph) {
+  Heap edges;                            // Edges ordered
+  std::vector<std::set<int>> cc;         // Set of sets
+  std::vector<std::pair<int, int>> mst;  // Edges in the minimum cost spanning tree
+
+  // Initialization
+  for(int i = 1; i <= graph->numNodes(); i++) {
+    // Initialize the set of sets, each node has its own set
+    std::set<int> aux;
+    aux.insert(i);
+    cc.push_back(aux);
+
+    // Add all the edges to the heap
+    for(int j = i+1; j <= graph->numNodes(); j++) {
+      if(graph->areAdjacent(i, j)) {
+        edges.insert({i, j}, graph->weight(i, j));
+      }
+    }
+  }
+  
+  while(edges.numElements() != 0 && cc.size() > 1) {
+    std::pair<int, int> minEdge = edges.remove();
+    int sc1 = subset(minEdge.first, cc);
+    int sc2 = subset(minEdge.second, cc);
+
+    if(sc1 != sc2) {  // If the nodes are in different subsets
+      cc[sc1].insert(cc[sc2].begin(), cc[sc2].end());  // The subsets are joined
+      cc.erase(cc.begin() + sc2);
+      mst.push_back({minEdge.first, minEdge.second});  // Add the edge to the tree
+    }
+  }
+  return mst;
+}

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <string>
-#include "AlgorithmsUtils.hpp"
 #include "GraphAlgorithms.hpp"
 
 // Forward declarations
@@ -15,8 +14,8 @@ void firstNode(Graph* graph);
 void nextNode(Graph* graph);
 void firstAdjacentNode(Graph* graph);
 void nextAdjacentNode(Graph* graph);
-void numNodes(Graph* graph);
-void dijkstra(Graph* graph);
+void dijkstraMenu(Graph* graph);
+void kruskalMenu(Graph* graph);
 
 int main() {
   Graph* graph = new Graph();
@@ -29,7 +28,7 @@ int main() {
   int D = graph->addNode('D');
   int E = graph->addNode('E');
   int F = graph->addNode('F');
-  graph->addNode('G');
+  // graph->addNode('G');
   graph->addEdge(A, B, 4);
   graph->addEdge(A, C, 2);
   graph->addEdge(B, C, 1);
@@ -73,19 +72,19 @@ int main() {
       else if (option == 9) nextNode(graph);
       else if (option == 10) firstAdjacentNode(graph);
       else if (option == 11) nextAdjacentNode(graph);
-      else if (option == 12) numNodes(graph);
+      else if (option == 12) std::cout << "\nThe graph has " << graph->numNodes() << " nodes." << std::endl;
       else if (option == 13) {
         std::cout << "\nAlgorithms:" << std::endl
                   << "1. Dijkstra: finds the shortest path from one node to all the others" << std::endl
-                  << "2. Floyd: finds the shortest path between every pair of nodes" << std::endl
-                  << "3. Kruskal: finds the minimum cost spanning tree" << std::endl
-                  << "4. Color a graph using the smallest number of colors possible" << std::endl
-                  << "5. Lowest cost Hamiltonian circuit (using branch and bound)" << std::endl
-                  << "6. Back" << std::endl;
+                  << "2. Kruskal: finds the minimum cost spanning tree" << std::endl
+                  << "3. Color a graph using the smallest number of colors possible" << std::endl
+                  << "4. Lowest cost Hamiltonian circuit (using branch and bound)" << std::endl
+                  << "5. Back" << std::endl;
         
         std::cin >> subOption;
 
-        if (subOption == 1) dijkstra(graph);
+        if (subOption == 1) dijkstraMenu(graph);
+        else if (subOption == 2) kruskalMenu(graph);
       }
   }
 }
@@ -224,11 +223,7 @@ void nextAdjacentNode(Graph* graph) {
   }
 }
 
-void numNodes(Graph* graph) {
-  std::cout << "\nThe graph has " << graph->numNodes() << " nodes." << std::endl;
-}
-
-void dijkstra(Graph* graph) {
+void dijkstraMenu(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the node from which you want to obtain the shortest paths: ";
   std::cin >> label;
@@ -257,4 +252,17 @@ void dijkstra(Graph* graph) {
       std::cout << "does not exist" << std::endl;
     }
   }
+}
+
+void kruskalMenu(Graph* graph) {
+  std::vector<std::pair<int, int>> mst = kruskal(graph);
+  std::cout<< "\nEdges in the minimum cost spanning tree: " << std::endl;
+  int totalCost = 0;
+
+  for(std::pair<int, int> edge : mst) {
+    totalCost += graph->weight(edge.first, edge.second);
+    std::cout << "  " << graph->label(edge.first) << " - " << graph->label(edge.second) << " ("
+      << graph->weight(edge.first, edge.second) << ")" << std::endl;
+  }
+  std::cout << "Total cost: " << totalCost << std::endl;
 }

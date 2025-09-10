@@ -8,3 +8,12 @@ int node(Graph* graph, char label) {
    }
    return n;
 }
+
+int subset(int x, std::vector<std::set<int>> vector) {
+   for(int i = 0; i < int(vector.size()); i++) {
+      if(vector[i].find(x) != vector[i].end()) {
+         return i;
+      }
+   }
+   return -1;
+}
