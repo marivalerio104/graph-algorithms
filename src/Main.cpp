@@ -1,5 +1,7 @@
 #include <iostream>
+#include <string>
 #include "AlgorithmsUtils.hpp"
+#include "GraphAlgorithms.hpp"
 
 // Forward declarations
 void addNode(Graph* graph);
@@ -14,30 +16,49 @@ void nextNode(Graph* graph);
 void firstAdjacentNode(Graph* graph);
 void nextAdjacentNode(Graph* graph);
 void numNodes(Graph* graph);
+void dijkstra(Graph* graph);
 
 int main() {
   Graph* graph = new Graph();
+  int option = 0, subOption;
 
-  std::cout << "Character graph created.\n"
+  // Graph for testing
+  int A = graph->addNode('A');
+  int B = graph->addNode('B');
+  int C = graph->addNode('C');
+  int D = graph->addNode('D');
+  int E = graph->addNode('E');
+  int F = graph->addNode('F');
+  graph->addNode('G');
+  graph->addEdge(A, B, 4);
+  graph->addEdge(A, C, 2);
+  graph->addEdge(B, C, 1);
+  graph->addEdge(B, D, 5);
+  graph->addEdge(C, D, 8);
+  graph->addEdge(C, E, 10);
+  graph->addEdge(D, E, 2);
+  graph->addEdge(D, F, 6);
+  graph->addEdge(E, F, 3);
+
+  std::cout << "Character graph created." << std::endl
             << "Do not add more than 30 nodes, do not use duplicate labels, and weights must be greater than 0." << std::endl;
 
-  int option = 0;
-
-  while (option != 13) {
-    std::cout << "\nEnter the number of the action you want to perform on the graph:"
-              << "\n  1. Add node"
-              << "\n  2. Remove node"
-              << "\n  3. Modify label"
-              << "\n  4. Add edge"
-              << "\n  5. Remove edge"
-              << "\n  6. Get edge weight"
-              << "\n  7. Modify edge weight"
-              << "\n  8. First node"
-              << "\n  9. Next node"
-              << "\n 10. First adjacent node"
-              << "\n 11. Next adjacent node"
-              << "\n 12. Number of nodes"
-              << "\n 13. Exit program" << std::endl;
+  while (option != 14) {
+    std::cout << "\nEnter the number of the action you want to perform on the graph:" << std::endl
+              << " 1. Add node" << std::endl
+              << " 2. Remove node" << std::endl
+              << " 3. Modify label" << std::endl
+              << " 4. Add edge" << std::endl
+              << " 5. Remove edge" << std::endl
+              << " 6. Get edge weight" << std::endl
+              << " 7. Modify edge weight" << std::endl
+              << " 8. First node" << std::endl
+              << " 9. Next node" << std::endl
+              << "10. First adjacent node" << std::endl
+              << "11. Next adjacent node" << std::endl
+              << "12. Number of nodes" << std::endl
+              << "13. Graph algorithms" << std::endl
+              << "14. Exit program" << std::endl;
 
       std::cin >> option;
 
@@ -53,6 +74,19 @@ int main() {
       else if (option == 10) firstAdjacentNode(graph);
       else if (option == 11) nextAdjacentNode(graph);
       else if (option == 12) numNodes(graph);
+      else if (option == 13) {
+        std::cout << "\nAlgorithms:" << std::endl
+                  << "1. Dijkstra: finds the shortest path from one node to all the others" << std::endl
+                  << "2. Floyd: finds the shortest path between every pair of nodes" << std::endl
+                  << "3. Kruskal: finds the minimum cost spanning tree" << std::endl
+                  << "4. Color a graph using the smallest number of colors possible" << std::endl
+                  << "5. Lowest cost Hamiltonian circuit (using branch and bound)" << std::endl
+                  << "6. Back" << std::endl;
+        
+        std::cin >> subOption;
+
+        if (subOption == 1) dijkstra(graph);
+      }
   }
 }
 
@@ -192,4 +226,35 @@ void nextAdjacentNode(Graph* graph) {
 
 void numNodes(Graph* graph) {
   std::cout << "\nThe graph has " << graph->numNodes() << " nodes." << std::endl;
+}
+
+void dijkstra(Graph* graph) {
+  char label;
+  std::cout << "\nEnter the label of the node from which you want to obtain the shortest paths: ";
+  std::cin >> label;
+  int n = node(graph, label);
+  auto result = dijkstra(graph, n);
+
+  for (int i = 1; i <= graph->numNodes(); i++) {
+    if (i == n) continue;
+    
+    std::cout << "\nPath from '" << graph->label(n) << "' to '" << graph->label(i) << "' ";
+    
+    if (result[i].first < INF) {
+      std::string path = "";
+      std::cout << "(cost: " << result[i].first << "):" << std::endl;
+      int j = i;
+
+      while(j != n) {
+        path.insert(0, 1, graph->label(j));
+        path = " -> " + path;
+        j = result[j].second;
+      }
+      path.insert(0, 1, graph->label(j));
+      std::cout << path << std::endl;
+
+    } else {
+      std::cout << "does not exist" << std::endl;
+    }
+  }
 }
