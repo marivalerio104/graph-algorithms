@@ -3,34 +3,38 @@
 Graph::Graph() { counter = 0; }
 
 int Graph::addNode(char label) {
-  counter++;
   labels[counter] = label;
-
+  
   // Clear the new row and column in the adjacency matrix
-  for(int x = 1; x <= counter; x++) {
-    edges[x][counter].adjacent = false;
-    edges[counter][x].adjacent = false;
+  for (int i = 0; i <= counter; i++) {
+    edges[i][counter].adjacent = false;
+    edges[counter][i].adjacent = false;
   }
-  return counter;
+  counter++;
+  return counter - 1;
 }
 
-void Graph::removeNode(int v) {
-  for(int x = v; x < counter; x++) {
-    labels[x] = labels[x+1];  // Remove the label from the list
+void Graph::removeNode(int n) {
+  counter--;
 
-    // Shift rows and columns in adjacency matrix to fill the gap
-    for(int i=1; i<=counter; i++) {
-      edges[i][x] = edges[i][x+1];
-    }
-    for(int j=1; j<=counter; j++) {
-      edges[x][j] = edges[x+1][j];
+  for (int i = n; i < counter; i++) {
+    labels[i] = labels[i+1];  // Remove the label from the list
+
+    // Shift the columns in the adjacency matrix to fill the gap
+    for (int j = 0; j < counter; j++) {
+      edges[i][j] = edges[i+1][j];
     }
   }
-  counter--;
+
+  // Shift the rows in the adjacency matrix to fill the gap
+  for (int i = n; i < counter; i++) {
+    for (int j = 0; j < counter; j++) {
+      edges[j][i] = edges[j][i+1];
+    }
+  }
 }
 
 char Graph::label(int n) { return labels[n]; }
-
 void Graph::modifyLabel(int n, char label) { labels[n] = label; }
 
 void Graph::addEdge(int n1, int n2, int weight) {
@@ -53,29 +57,29 @@ void Graph::modifyWeight(int n1, int n2, int weight) {
 }
 
 int Graph::firstNode() { 
-  return (counter != 0) ? 1 : 0; 
+  return (counter == 0) ? -1 : 0;
 }
 
-int Graph::nextNode(int v) { 
-  return (v == counter) ? 0 : v + 1; 
+int Graph::nextNode(int n) { 
+  return (n == counter-1) ? -1 : n + 1; 
 }
 
-int Graph::firstAdjacentNode(int v) {
-  for(int j = 1; j <= counter; j++) {
-    if(edges[v][j].adjacent == true) {
+int Graph::firstAdjacentNode(int n) {
+  for (int j = 0; j < counter; j++) {
+    if (edges[n][j].adjacent == true) {
       return j;
     }
   }
-  return 0;  // No adjacent n found
+  return -1;  // No adjacent node found
 }
 
 int Graph::nextAdjacentNode(int n1, int n2) {
-  for(int j = n2 + 1; j <= counter; j++) {
-    if(edges[n1][j].adjacent == true) {
-      return j;
+  for (int i = n2 + 1; i < counter; i++) {
+    if (edges[n1][i].adjacent == true) {
+      return i;
     }
   }
-  return 0;  // No other adjacent n found
+  return -1;  // No other adjacent node found
 }
 
 int Graph::numNodes() { return counter; }

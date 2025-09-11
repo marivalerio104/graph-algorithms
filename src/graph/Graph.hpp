@@ -6,8 +6,8 @@ constexpr int MAX_NODES = 30; // Maximum number of nodes the graph can have
 class Graph {
 private:
   int counter;   
-  char labels[MAX_NODES + 1];   
-  GraphCell edges[MAX_NODES + 1][MAX_NODES + 1];
+  char labels[MAX_NODES];   
+  GraphCell edges[MAX_NODES][MAX_NODES];
 
 public:
   // Creates a new empty graph.
@@ -45,18 +45,18 @@ public:
   // Requires 'n1' and 'n2' different, adjacent and valid in the graph.
   void modifyWeight(int n1, int n2, int weight);
 
-  // Returns the first node of the graph, returns 0 if the graph is empty.
+  // Returns the first node of the graph, returns -1 if the graph is empty.
   int firstNode();
 
-  // Returns the node after 'n', returns 0 if 'n' is the last one.
+  // Returns the node after 'n', returns -1 if 'n' is the last one.
   // Requires 'n' valid in the graph.
   int nextNode(int n);
 
-  // Returns the first adjacent node of 'n', returns 0 if 'n' has no adjacent nodes.
+  // Returns the first adjacent node of 'n', returns -1 if 'n' has no adjacent nodes.
   // Requires 'n' valid in the graph.
   int firstAdjacentNode(int n);
 
-  // Returns the next adjacent node of 'n1' after 'n2', returns 0 if 'n2' is the last adjacent node of 'n1'.
+  // Returns the next adjacent node of 'n1' after 'n2', returns -1 if 'n2' is the last adjacent node of 'n1'.
   // Requires 'n1' and 'n2' different, adjacent and valid in the graph.
   int nextAdjacentNode(int n1, int n2);
 

@@ -17,6 +17,7 @@ void nextAdjacentNode(Graph* graph);
 void dijkstraMenu(Graph* graph);
 void kruskalMenu(Graph* graph);
 void graphColoringMenu(Graph* graph);
+void hamiltonMenu(Graph* graph);
 
 int main() {
   Graph* graph = new Graph();
@@ -26,19 +27,19 @@ int main() {
   int A = graph->addNode('A');
   int B = graph->addNode('B');
   int C = graph->addNode('C');
-  // int D = graph->addNode('D');
-  // int E = graph->addNode('E');
-  // int F = graph->addNode('F');
+  int D = graph->addNode('D');
+  int E = graph->addNode('E');
+  int F = graph->addNode('F');
   // graph->addNode('G');
   graph->addEdge(A, B, 4);
   graph->addEdge(A, C, 2);
-  // graph->addEdge(B, C, 1);
-  // graph->addEdge(B, D, 5);
-  // graph->addEdge(C, D, 8);
-  // graph->addEdge(C, E, 10);
-  // graph->addEdge(D, E, 2);
-  // graph->addEdge(D, F, 6);
-  // graph->addEdge(E, F, 3);
+  graph->addEdge(B, C, 1);
+  graph->addEdge(B, D, 5);
+  graph->addEdge(C, D, 8);
+  graph->addEdge(C, E, 10);
+  graph->addEdge(D, E, 2);
+  graph->addEdge(D, F, 6);
+  graph->addEdge(E, F, 3);
 
   std::cout << "Character graph created." << std::endl
             << "Do not add more than 30 nodes, do not use duplicate labels, and weights must be greater than 0." << std::endl;
@@ -87,6 +88,7 @@ int main() {
         if (subOption == 1) dijkstraMenu(graph);
         else if (subOption == 2) kruskalMenu(graph);
         else if (subOption == 3) graphColoringMenu(graph);
+        else if (subOption == 4) hamiltonMenu(graph);
       }
   }
 }
@@ -105,7 +107,7 @@ void removeNode(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the node to remove: ";
   std::cin >> label;
-  int n = node(graph, label);
+  int n = utils::node(graph, label);
   graph->removeNode(n);
   std::cout << "\nNode with label '" << label << "' removed." << std::endl;
 }
@@ -114,7 +116,7 @@ void modifyLabel(Graph* graph) {
   char label, newLabel;
   std::cout << "\nEnter the label of the node you want to modify: ";
   std::cin >> label;
-  int n = node(graph, label);
+  int n = utils::node(graph, label);
   std::cout << "Enter the new label of the node: ";
   std::cin >> newLabel;
   graph->modifyLabel(n, newLabel);
@@ -125,10 +127,10 @@ void addEdge(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the first node: ";
   std::cin >> label;
-  int n1 = node(graph, label);
+  int n1 = utils::node(graph, label);
   std::cout << "Enter the label of the second node: ";
   std::cin >> label;
-  int n2 = node(graph, label);
+  int n2 = utils::node(graph, label);
   std::cout << "Enter the weight of the new edge: ";
   int weight;
   std::cin >> weight;
@@ -140,10 +142,10 @@ void removeEdge(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the first node: ";
   std::cin >> label;
-  int n1 = node(graph, label);
+  int n1 = utils::node(graph, label);
   std::cout << "Enter the label of the second node: ";
   std::cin >> label;
-  int n2 = node(graph, label);
+  int n2 = utils::node(graph, label);
   graph->removeEdge(n1, n2);
   std::cout << "\nEdge removed." << std::endl;
 }
@@ -152,10 +154,10 @@ void getWeight(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the first node: ";
   std::cin >> label;
-  int n1 = node(graph, label);
+  int n1 = utils::node(graph, label);
   std::cout << "Enter the label of the second node: ";
   std::cin >> label;
-  int n2 = node(graph, label);
+  int n2 = utils::node(graph, label);
   std::cout << "\nThe weight of the edge is " << graph->weight(n1, n2) << "." << std::endl;
 }
 
@@ -163,10 +165,10 @@ void modifyWeight(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the first node: ";
   std::cin >> label;
-  int n1 = node(graph, label);
+  int n1 = utils::node(graph, label);
   std::cout << "Enter the label of the second node: ";
   std::cin >> label;
-  int n2 = node(graph, label);
+  int n2 = utils::node(graph, label);
   std::cout << "Enter the new weight of the edge: ";
   int weight;
   std::cin >> weight;
@@ -175,9 +177,9 @@ void modifyWeight(Graph* graph) {
 }
 
 void firstNode(Graph* graph) {
-  int n1 = graph->firstNode();
-  if (n1) {
-    std::cout << "\nThe label of the first node is '" << graph->label(n1) << "'." << std::endl;
+  int n = graph->firstNode();
+  if (n != -1) {
+    std::cout << "\nThe label of the first node is '" << graph->label(n) << "'." << std::endl;
   } else {
     std::cout << "\nThe graph is empty." << std::endl;
   }
@@ -187,10 +189,11 @@ void nextNode(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the node: ";
   std::cin >> label;
-  int n = node(graph, label);
+  int n = utils::node(graph, label);
   n = graph->nextNode(n);
-  if (n) {
-    std::cout << "The label of the next node next to '" << label << "' is '" << graph->label(n) << "'." << std::endl;
+
+  if (n != -1) {
+    std::cout << "The label of the node next to '" << label << "' is '" << graph->label(n) << "'." << std::endl;
   } else {
     std::cout << "\nThe graph has no more nodes." << std::endl;
   }
@@ -200,9 +203,9 @@ void firstAdjacentNode(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the node: ";
   std::cin >> label;
-  int n = node(graph, label);
+  int n = utils::node(graph, label);
   n = graph->firstAdjacentNode(n);
-  if (n) {
+  if (n != -1) {
     std::cout << "\nThe label of the first adjacent node is '" << graph->label(n) << "'." << std::endl;
   } else {
     std::cout << "\nThe node has no adjacent nodes." << std::endl;
@@ -213,12 +216,12 @@ void nextAdjacentNode(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the node: ";
   std::cin >> label;
-  int n1 = node(graph, label);
+  int n1 = utils::node(graph, label);
   std::cout << "Enter the label of the adjacent node: ";
   std::cin >> label;
-  int n2 = node(graph, label);
+  int n2 = utils::node(graph, label);
   n1 = graph->nextAdjacentNode(n1, n2);
-  if (n1) {
+  if (n1 != -1) {
     std::cout << "\nThe label of the next adjacent node is '" << graph->label(n1) << "'." << std::endl;
   } else {
     std::cout << "\nThe node has no more adjacent nodes." << std::endl;
@@ -229,10 +232,10 @@ void dijkstraMenu(Graph* graph) {
   char label;
   std::cout << "\nEnter the label of the node from which you want to obtain the shortest paths: ";
   std::cin >> label;
-  int n = node(graph, label);
-  auto result = dijkstra(graph, n);
+  int n = utils::node(graph, label);
+  auto result = algorithms::dijkstra(graph, n);
 
-  for (int i = 1; i <= graph->numNodes(); i++) {
+  for (int i = 0; i < graph->numNodes(); i++) {
     if (i == n) continue;
     
     std::cout << "\nPath from '" << graph->label(n) << "' to '" << graph->label(i) << "' ";
@@ -242,7 +245,7 @@ void dijkstraMenu(Graph* graph) {
       std::cout << "(cost: " << result[i].first << "):" << std::endl;
       int j = i;
 
-      while(j != n) {
+      while (j != n) {
         path.insert(0, 1, graph->label(j));
         path = " -> " + path;
         j = result[j].second;
@@ -257,11 +260,11 @@ void dijkstraMenu(Graph* graph) {
 }
 
 void kruskalMenu(Graph* graph) {
-  std::vector<std::pair<int, int>> mst = kruskal(graph);
+  std::vector<std::pair<int, int>> mst = algorithms::kruskal(graph);
   std::cout<< "\nEdges in the minimum cost spanning tree: " << std::endl;
   int totalCost = 0;
 
-  for(std::pair<int, int> edge : mst) {
+  for (std::pair<int, int> edge : mst) {
     totalCost += graph->weight(edge.first, edge.second);
     std::cout << "  " << graph->label(edge.first) << " - " << graph->label(edge.second) << " ("
       << graph->weight(edge.first, edge.second) << ")" << std::endl;
@@ -270,14 +273,14 @@ void kruskalMenu(Graph* graph) {
 }
 
 void graphColoringMenu(Graph* graph) {
-  std::vector<std::vector<int>> colors = graphColoring(graph);
+  std::vector<std::vector<int>> colors = algorithms::graphColoring(graph);
   int i = 1;
-  std::cout << "\nSets of vertices colored with a different color:" << std::endl;
+  std::cout << "\nSets of vertices colored with different colors:" << std::endl;
 
-  for(std::vector<int> color : colors) {
-    if(color.size() != 0) {
+  for (std::vector<int> color : colors) {
+    if (color.size() != 0) {
       std::cout << "  " << i << ": ";
-      for(int v : color) {
+      for (int v : color) {
         std::cout<< graph->label(v) << ", ";
       }
       std::cout << std::endl;

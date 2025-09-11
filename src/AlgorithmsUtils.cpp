@@ -1,9 +1,11 @@
 #include "AlgorithmsUtils.hpp"
 
+namespace utils {
+
 int node(Graph* graph, char label) {
   int n = graph->firstNode();
 
-  while(n && (graph->label(n) != label)) {
+  while(n != -1 && (graph->label(n) != label)) {
     n = graph->nextNode(n);
   }
   return n;
@@ -27,4 +29,6 @@ int subset(int x, std::vector<std::set<int>> vector) {
     }
   }
   return -1;
+}
+
 }
