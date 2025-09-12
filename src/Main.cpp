@@ -288,3 +288,18 @@ void graphColoringMenu(Graph* graph) {
     }
   }
 }
+
+void hamiltonMenu(Graph* graph){
+  std::vector<int> path = algorithms::hamilton(graph);
+
+  if (path.empty()) {
+    std::cout << "\nA Hamiltonian cycle does not exist for this graph." << std::endl;
+  } else {
+    std::cout << "\nShortest Hamiltonian cycle: " << std::endl;
+    
+    for (int n : path) {
+      std::cout << graph->label(n) << " - ";
+    }
+    std::cout << graph->label(path[0]) << std::endl;
+  }
+}

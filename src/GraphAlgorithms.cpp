@@ -139,53 +139,92 @@ void hamiltonR(int n, std::vector<std::vector<int>>& weights,
 
    std::vector<std::pair<double, int>> bounds;
 
-   for (int i = 0; i < int(weights.size()); i++) { // Se calculan las bounds
-      if (weights[v][j] != -1) { // Si existe la arista
-         if (forced[v][j] == true) {
-            bounds.push_back({utils::getBound(weights, forced), j});
-         } else {
-            forced[n][i] = true;
-            forced[i][n] = true;
-            double bound = utils::getBound(weights, forced);
+   // Compute bounds for the next possible edges
+  for (int i = 0; i < int(weights.size()); i++) { 
+    if (weights[n][i] != -1) { // If the edge exists
+      if (forced[n][i] == true) { // Already forced, just evaluate
+        bounds.push_back({utils::getBound(weights, forced), i});
 
-            // Si no existe camino de Hamilton
-            if (bound == 0) return;
-          
-            bounds.push_back({bound, j});
-            forced[n][i] = false;
-            forced[i][n] = false;
-         }
-      }
-   }
-   std::sort(bounds.begin(), bounds.end());
+      } else {
+        // Temporarily force this edge
+        forced[n][i] = true;
+        forced[i][n] = true;
+        double bound = utils::getBound(weights, forced);
 
-   for (auto va : bounds) {
-      // Poda
-      if (va.first > bestCost) break;
+        // If there is no Hamiltonian path possible, prune
+        if (bound == 0) return;
       
-      if (visited.find(va.second) == visited.end()) { // If it is feasible
-         currentSolution.push_back(va.second);
-         currentCost += weights[v][va.second];
-         visited.insert(va.second);
-         forced[v][va.second] = true;
-         forced[va.second][v] = true;
+        bounds.push_back({bound, i});
 
-         if (int(visited.size()) == int(weights.size())) { // Stop condition
-            if ((weights[va.second][0] != -1) && (currentCost + weights[va.second][0] < bestCost)) {
-              bestCost = currentCost + weights[va.second][0];
-              bestSolution = currentSolution;
-            }
-         } else {
-            hamiltonR(va.second, weights, forced, visited, currentSolution, bestSolution, currentCost, bestCost);
-         }
-         // Rollback
-         currentSolution.pop_back();
-         currentCost -= weights[v][va.second];
-         visited.erase(va.second);
-         forced[v][va.second] = false;
-         forced[va.second][v] = false;
+        // Rollback the temporary forcing
+        forced[n][i] = false;
+        forced[i][n] = false;
       }
+    }
    }
+   std::sort(bounds.begin(), bounds.end()); // Explore in order of best bounds
+
+  for (auto na : bounds) {
+    // If bound already exceeds best cost, prune
+    if (na.first > bestCost) break;
+    
+    if (visited.find(na.second) == visited.end()) { // If the node has not been visited
+      currentSolution.push_back(na.second);
+      currentCost += weights[n][na.second];
+      visited.insert(na.second);
+
+      // Mark the edge as forced (part of current path)
+      forced[n][na.second] = true;
+      forced[na.second][n] = true;
+
+      if (int(visited.size()) == int(weights.size())) { // Stop condition: visited all vertices
+        // Check if there is an edge back to the start and if it improves bestCost
+        if ((weights[na.second][0] != -1) && (currentCost + weights[na.second][0] < bestCost)) {
+          bestCost = currentCost + weights[na.second][0];
+          bestSolution = currentSolution;
+        }
+      } else {
+        // Recurse deeper
+        hamiltonR(na.second, weights, forced, visited, currentSolution, bestSolution, currentCost, bestCost);
+      }
+      // Rollback changes before trying the next option
+      currentSolution.pop_back();
+      currentCost -= weights[n][na.second];
+      visited.erase(na.second);
+      forced[n][na.second] = false;
+      forced[na.second][n] = false;
+    }
+  }
 } 
+
+std::vector<int> hamilton(Graph* graph) {
+  std::vector<int> bestSolution, currentSolution = {0};
+  std::set<int> visited = {0};            // Set of visited vertices
+  std::vector<std::vector<int>> weights;  // Adjacency matrix with weights
+  std::vector<std::vector<bool>> forced;  // Forced edges for branch & bound
+  int bestCost = INF;
+  int currentCost = 0;
+
+  // Initialize weight and forced matrices
+  for (int i = 0; i < graph->numNodes(); i++) { 
+    std::vector<int> fila;
+    weights.push_back(fila);
+    std::vector<bool> aux;
+
+    for (int j = 0; j < graph->numNodes(); j++) {
+      if (i != j && graph->areAdjacent(i, j)) {
+        weights[i].push_back(graph->weight(i, j));  // Store edge weight
+      } else {
+        weights[i].push_back(-1);  // -1 means no edge
+      }
+      aux.push_back(false);  // Initialize forced edges as false
+    }
+    forced.push_back(aux);
+  }
+
+  // Start recursive Hamiltonian cycle search from node 0
+  hamiltonR(0, weights, forced, visited, currentSolution, bestSolution, currentCost, bestCost);
+  return bestSolution;
+}
 
 }

@@ -3,6 +3,7 @@
 #include "AlgorithmsUtils.hpp"
 #include "graph/Graph.hpp"
 #include "heap/Heap.hpp"
+#include <algorithm>
 #include <climits>
 #include <utility>
 #include <vector>
@@ -23,5 +24,9 @@ std::vector<std::pair<int, int>> kruskal(Graph* graph);
 // Returns a vector of vectors, where each index of the outer vector represents a color, and the vector associated with 
 // that index contains the nodes that should be painted with that color in an optimal solution to the graph coloring problem.
 std::vector<std::vector<int>> graphColoring(Graph* graph);
+
+// Returns the minimum-cost Hamiltonian cycle of the graph as a vector of nodes.
+// Requires all weights in the graph greater than or equal to 0.
+std::vector<int> hamilton(Graph* graph);
 
 }

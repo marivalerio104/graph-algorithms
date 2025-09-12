@@ -1,5 +1,6 @@
 #pragma once
 #include "graph/Graph.hpp"
+#include <array>
 #include <set>
 #include <vector>
 
@@ -13,5 +14,8 @@ bool areDisjoint(std::vector<int> v1, std::vector<int> v2);
 
 // Returns the index of the subset of 'x'
 int subset(int x, std::vector<std::set<int>> vector);
+
+// Returns the lower bound for Hamilton
+double getBound(std::vector<std::vector<int>> weights, std::vector<std::vector<bool>> forced);
 
 }
